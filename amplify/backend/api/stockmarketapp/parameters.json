@@ -1,0 +1,11 @@
+{
+  "AppSyncApiName": "stockmarketapp",
+  "DynamoDBBillingMode": "PAY_PER_REQUEST",
+  "DynamoDBEnableServerSideEncryption": false,
+  "AuthCognitoUserPoolId": {
+    "Fn::GetAtt": [
+      "authstockmarketappb58c2642",
+      "Outputs.UserPoolId"
+    ]
+  }
+}

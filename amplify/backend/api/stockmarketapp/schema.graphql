@@ -1,0 +1,49 @@
+# This "input" configures a global authorization rule to enable public access to
+# all models in this schema. Learn more about authorization rules here: https://docs.amplify.aws/cli/graphql/authorization-rules
+input AMPLIFY {
+  globalAuthRule: AuthRule = { allow: public }
+} # FOR TESTING ONLY!
+type IntradayStockPrice
+  @model(subscriptions: null)
+  @key(name: "BySymbol", fields: ["symbol", "data_timestamp"]) {
+  id: ID!
+  symbol: String!
+  data_timezone: String!
+  data_timestamp: Int!
+  open_price: Float
+  high_price: Float
+  low_price: Float
+  close_price: Float
+  volume: Int
+}
+
+type Subscription {
+  intradayStockPriceCreated(symbol: String): IntradayStockPrice
+    @aws_subscribe(mutations: ["createIntradayStockPrice"])
+}
+
+type StockSymbol @model(subscriptions: null) @auth(rules: [{ allow: owner }]) {
+  id: ID!
+  symbol: String!
+  owner: String
+}
+
+type StockSymbolConnection {
+  items: [StockSymbol]
+  nextToken: String
+}
+
+type IntradayStockPriceConnection {
+  items: [IntradayStockPrice]
+  nextToken: String
+}
+
+type Query {
+  listAllStockSymbols(limit: Int, nextToken: String): StockSymbolConnection
+  retrieveLatestIntradayPrices(
+    symbol: String
+    ts: Int
+    limit: Int
+    nextToken: String
+  ): IntradayStockPriceConnection
+}
